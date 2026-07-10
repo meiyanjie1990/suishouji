@@ -1,33 +1,4 @@
 {
-  "tasks": [
-    {
-      "id": "test_1783667975",
-      "title": "🎉 测试提醒 - 方案C跑通了！",
-      "dueDate": "2026-07-10T15:18",
-      "hasTime": true,
-      "status": "pending",
-      "rawInput": "测试微信推送",
-      "createdAt": "2026-07-10T15:19:35.219597+08:00",
-      "wxNotified": false
-    },
-    {
-      "id": "t_1783674305663_lgnly3",
-      "title": "测试",
-      "dueDate": "2026-07-10T17:05",
-      "hasTime": true,
-      "status": "pending",
-      "rawInput": "我只是做个测试。现在就立刻提醒我一下。",
-      "createdAt": "2026-07-10T09:05:05.663Z"
-    },
-    {
-      "id": "t_1783674472125_nszci2",
-      "title": "去喝水",
-      "dueDate": "2026-07-10T17:17",
-      "hasTime": true,
-      "status": "pending",
-      "rawInput": "10 分钟后提醒我去喝水。",
-      "createdAt": "2026-07-10T09:07:52.125Z"
-    }
-  ],
+  "tasks": [],
   "updatedAt": "2026-07-10T09:07:52.127Z"
 }
