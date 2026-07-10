@@ -8,7 +8,16 @@
       "status": "pending",
       "rawInput": "8 点钟的时候提醒我发一下朋友圈。",
       "createdAt": "2026-07-10T09:54:38.541Z"
+    },
+    {
+      "id": "t_1783678017206_d7lasy",
+      "title": "喝水",
+      "dueDate": "2026-07-10T18:26",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "随便做个实验，20 分钟后提醒我喝水。",
+      "createdAt": "2026-07-10T10:06:57.206Z"
     }
   ],
-  "updatedAt": "2026-07-10T09:54:50.576Z"
+  "updatedAt": "2026-07-10T10:06:57.211Z"
 }
