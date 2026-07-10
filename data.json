@@ -16,10 +16,11 @@
       "title": "实验一闹铃",
       "dueDate": "2026-07-10T21:20",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "1 个小时后帮我设定一个实验一闹铃。",
       "createdAt": "2026-07-10T12:20:23.675Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-10T15:15:57.764Z"
     },
     {
       "id": "t_1783686039683_ftj0z8",
@@ -31,5 +32,5 @@
       "createdAt": "2026-07-10T12:20:39.683Z"
     }
   ],
-  "updatedAt": "2026-07-10T23:07:20.348187+08:00"
+  "updatedAt": "2026-07-10T15:15:57.776Z"
 }
