@@ -7,8 +7,9 @@
       "hasTime": true,
       "status": "pending",
       "rawInput": "我做个测试，1 分钟之后提醒我喝点水。",
-      "createdAt": "2026-07-10T09:19:12.544Z"
+      "createdAt": "2026-07-10T09:19:12.544Z",
+      "wxNotified": true
     }
   ],
-  "updatedAt": "2026-07-10T09:19:12.548Z"
+  "updatedAt": "2026-07-10T17:21:37.589702+08:00"
 }
