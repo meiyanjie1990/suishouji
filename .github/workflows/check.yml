@@ -1,0 +1,112 @@
+name: 微信提醒
+on:
+  push:
+    paths:
+      - 'data.json'
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 检查到期任务并推送微信提醒
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python3 << 'PYEOF'
+          import json, os, sys, urllib.request, urllib.error
+          from datetime import datetime, timezone, timedelta
+
+          # Force UTF-8 output
+          sys.stdout.reconfigure(encoding='utf-8') if hasattr(sys.stdout, 'reconfigure') else None
+
+          tz = timezone(timedelta(hours=8))
+          now = datetime.now(tz)
+
+          with open('data.json', 'r', encoding='utf-8') as f:
+              data = json.load(f)
+
+          tasks = data.get('tasks', [])
+          updated = False
+          sent_count = 0
+
+          for task in tasks:
+              if task.get('status') != 'pending':
+                  continue
+              if task.get('wxNotified'):
+                  continue
+
+              due_str = task.get('dueDate', '')
+              if not due_str:
+                  continue
+              try:
+                  due_date = datetime.fromisoformat(due_str)
+                  # Make it timezone-aware (Beijing time) for comparison
+                  if due_date.tzinfo is None:
+                      due_date = due_date.replace(tzinfo=tz)
+              except:
+                  continue
+
+              if due_date <= now:
+                  title = task.get('title', 'unnamed')
+                  has_time = task.get('hasTime', False)
+
+                  if has_time:
+                      body = f"[预定] {due_date.strftime('%m/%d %H:%M')}"
+                  else:
+                      body = f"[截止] {due_date.strftime('%m/%d')}"
+
+                  msg_data = json.dumps({
+                      "token": "d3f83e6113a442efa482e00eb23ae07d",
+                      "title": title,
+                      "content": f"⏰ {title}<br>{body}<br><br>→ 打开随手记查看",
+                      "template": "html"
+                  }, ensure_ascii=False).encode('utf-8')
+
+                  try:
+                      req = urllib.request.Request(
+                          'https://www.pushplus.plus/send',
+                          data=msg_data,
+                          headers={'Content-Type': 'application/json'}
+                      )
+                      resp = urllib.request.urlopen(req, timeout=10)
+                      result = json.loads(resp.read())
+                      if result.get('code') == 200:
+                          task['wxNotified'] = True
+                          updated = True
+                          sent_count += 1
+                          print(f"[OK] sent: {title}")
+                      else:
+                          print(f"[ERR] PushPlus: {result}")
+                  except Exception as e:
+                      print(f"[ERR] {title}: {e}")
+
+          print(f"Total sent: {sent_count}")
+
+          if updated:
+              data['updatedAt'] = now.isoformat()
+              with open('data.json', 'w', encoding='utf-8') as f:
+                  json.dump(data, f, ensure_ascii=False, indent=2)
+              with open('CHANGED', 'w') as f:
+                  f.write('1')
+          PYEOF
+
+      - name: 提交变更
+        if: success()
+        run: |
+          if [ -f CHANGED ]; then
+            git config user.name "suishouji-bot"
+            git config user.email "bot@suishouji.local"
+            git add data.json
+            git commit -m "bot: push reminders $(TZ='Asia/Shanghai' date +'%m/%d %H:%M')" || true
+            git push
+            rm CHANGED
+          fi
