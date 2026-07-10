@@ -14,12 +14,12 @@
       "title": "喊我一下",
       "dueDate": "2026-07-10T23:31",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "15 分钟后喊我一下。",
       "createdAt": "2026-07-10T15:16:29.348Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-10T23:28:54.594Z"
     }
   ],
-  "updatedAt": "2026-07-11T04:50:27.228806+08:00",
-  "lastCheck": "2026-07-11T04:50:27.228806+08:00"
+  "updatedAt": "2026-07-10T23:28:54.597Z"
 }
