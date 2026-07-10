@@ -4,7 +4,7 @@ on:
     paths:
       - 'data.json'
   schedule:
-    - cron: '0,5,10,15,20,25,30,35,40,45,50,55 * * * *'
+    - cron: '7 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -109,4 +110,26 @@ jobs:
             git commit -m "bot: push reminders $(TZ='Asia/Shanghai' date +'%m/%d %H:%M')" || true
             git push
             rm CHANGED
+          fi
+
+      - name: 自触发
+        if: success()
+        run: |
+          HAS=$(python3 -c "
+import json
+with open('data.json') as f:
+    data = json.load(f)
+pending = [t for t in data.get('tasks',[]) if t.get('status')=='pending' and not t.get('wxNotified')]
+print('yes' if pending else 'no')
+")
+          if [ "$HAS" = "yes" ]; then
+            sleep 290
+            curl -s -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d '{"ref":"main"}' \
+              https://api.github.com/repos/meiyanjie1990/suishouji/actions/workflows/check.yml/dispatches
+            echo "self-triggered"
+          else
+            echo "chain stops - no pending tasks"
           fi
