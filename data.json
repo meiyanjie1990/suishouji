@@ -1,15 +1,4 @@
 {
-  "tasks": [
-    {
-      "id": "test_1783667975",
-      "title": "🎉 测试提醒 - 方案C跑通了！",
-      "dueDate": "2026-07-10T15:18",
-      "hasTime": true,
-      "status": "pending",
-      "rawInput": "测试微信推送",
-      "createdAt": "2026-07-10T15:19:35.219597+08:00",
-      "wxNotified": true
-    }
-  ],
+  "tasks": [],
   "updatedAt": "2026-07-10T16:26:10.220717+08:00"
 }
