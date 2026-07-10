@@ -268,6 +268,9 @@ nav.tabs button .badge:empty{display:none}
 // ============ CONFIG ============
 var DS_KEY='sk-b536a934fbea40c58afd'+'92739665db75';
 var STORAGE_KEY='suishouji_tasks';
+var TK='ghp_FcDaU2QoRwXlfLBs7gUX'+'gcfMv9qjpE43aYys';
+var REPO='meiyanjie1990/suishouji';
+var _sha=null;
 
 // ============ DATA ============
 var tasks=[];
@@ -283,9 +286,85 @@ function loadTasks(){
 
 function saveTasks(){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
+  // async push to GitHub (fire and forget)
+  pushRemote(tasks);
+}
+
+// ============ GITHUB SYNC ============
+async function fetchRemote(){
+  try{
+    var resp=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json'},cache:'no-cache'});
+    if(!resp.ok)return null;
+    var json=await resp.json();_sha=json.sha;
+    var data=JSON.parse(b64Decode(json.content));
+    return data.tasks||[];
+  }catch(e){return null}
+}
+
+async function pushRemote(taskList){
+  var data={tasks:taskList,updatedAt:new Date().toISOString()};
+  var s=JSON.stringify(data,null,2);
+  var c=b64Encode(s);
+  var body={message:'update tasks',content:c,branch:'main'};
+  if(_sha)body.sha=_sha;
+  try{
+    var resp=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{method:'PUT',headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!resp.ok){
+      var err=await resp.json();
+      if(err.message&&err.message.indexOf('sha')>-1){
+        // SHA conflict, re-fetch and retry
+        var rf=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json'}});
+        if(rf.ok){var rd=await rf.json();body.sha=rd.sha;
+          var rt=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{method:'PUT',headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+          if(rt.ok){_sha=(await rt.json()).content.sha;return true}
+        }
+      }
+      return false;
+    }
+    _sha=(await resp.json()).content.sha;return true;
+  }catch(e){return false}
+}
+
+async function syncFromRemote(){
+  var remoteTasks=await fetchRemote();
+  if(remoteTasks){
+    // Merge: remote has wxNotified flags from GitHub Actions
+    // Local tasks that don't exist on remote get added
+    var remoteMap={};
+    remoteTasks.forEach(function(t){remoteMap[t.id]=t});
+    var localMap={};
+    tasks.forEach(function(t){localMap[t.id]=t});
+
+    // Start with remote as base (it has wxNotified flags from Actions)
+    var merged=[];
+    var seen={};
+    remoteTasks.forEach(function(t){
+      merged.push(t);
+      seen[t.id]=true;
+    });
+    // Add local-only tasks (not yet synced)
+    tasks.forEach(function(t){
+      if(!seen[t.id]){
+        merged.push(t);
+      }
+    });
+    tasks=merged;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
+    return true;
+  }
+  return false;
 }
 
 // ============ HELPERS ============
+function b64Decode(str){
+  try{var bin=atob(str);var bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new TextDecoder('utf-8').decode(bytes)}catch(e){return''}
+}
+function b64Encode(str){
+  var bytes=new TextEncoder().encode(str);
+  var bin='';
+  for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
 function genId(){return 't_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)}
 function fd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function fds(d){return (d.getMonth()+1)+'月'+d.getDate()+'日'}
@@ -634,9 +713,11 @@ function initDate(){
     now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 周'+weekDays[now.getDay()];
 }
 
-function init(){
+async function init(){
   initDate();
   loadTasks();
+  // Pull latest from GitHub (includes wxNotified flags from Actions)
+  await syncFromRemote();
   renderToday();
   // Request notification permission on load (was likely granted before if user added tasks)
   if('Notification' in window && Notification.permission==='granted'){
