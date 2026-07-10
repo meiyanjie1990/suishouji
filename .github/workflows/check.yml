@@ -85,26 +85,25 @@ jobs:
                   except Exception as e:
                       print(f"[ERR] {title}: {e}")
 
-          # Check if there are tasks due within 30 min -> keep chain alive
-          window = now + timedelta(minutes=30)
-          has_upcoming = False
-          for task in tasks:
-              if task.get('status') != 'pending': continue
-              if task.get('wxNotified'): continue
-              try:
-                  d = datetime.fromisoformat(task.get('dueDate',''))
-                  if d.tzinfo is None: d = d.replace(tzinfo=tz)
-                  if d <= window: has_upcoming = True
-              except: pass
-
-          # Always update timestamp to keep chain alive if tasks pending
+          # Keep chain alive if there are pending tasks
           pending_count = sum(1 for t in tasks if t.get('status')=='pending' and not t.get('wxNotified'))
-          if pending_count > 0 and has_upcoming:
-              data['lastCheck'] = now.isoformat()
-              updated = True
-              print(f"Chain: {pending_count} pending, keep alive")
-          elif pending_count > 0:
-              print(f"Chain: {pending_count} pending but none soon, stop")
+          if pending_count > 0:
+              # Only trigger next check if lastCheck was >4 min ago (avoid flooding)
+              last_check_str = data.get('lastCheck', '')
+              should_continue = True
+              if last_check_str:
+                  try:
+                      last_check = datetime.fromisoformat(last_check_str)
+                      if last_check.tzinfo is None: last_check = last_check.replace(tzinfo=tz)
+                      if (now - last_check).total_seconds() < 240:
+                          should_continue = False
+                  except: pass
+              if should_continue:
+                  data['lastCheck'] = now.isoformat()
+                  updated = True
+                  print(f"Chain: {pending_count} pending, keep alive")
+              else:
+                  print(f"Chain: {pending_count} pending, skip (too soon)")
           else:
               print(f"Chain: all clear, stop")
 
