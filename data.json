@@ -24,10 +24,11 @@
       "title": "喝水",
       "dueDate": "2026-07-10T18:17",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "随便做个实验。10 分钟后提醒我喝水。",
-      "createdAt": "2026-07-10T10:07:21.728Z"
+      "createdAt": "2026-07-10T10:07:21.728Z",
+      "completedAt": "2026-07-10T10:07:23.916Z"
     }
   ],
-  "updatedAt": "2026-07-10T10:07:21.729Z"
+  "updatedAt": "2026-07-10T10:07:23.916Z"
 }
