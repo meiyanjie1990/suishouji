@@ -1,4 +1,33 @@
 {
-  "tasks": [],
-  "updatedAt": "2026-07-10T16:26:10.220717+08:00"
+  "tasks": [
+    {
+      "id": "test_1783667975",
+      "title": "🎉 测试提醒 - 方案C跑通了！",
+      "dueDate": "2026-07-10T15:18",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "测试微信推送",
+      "createdAt": "2026-07-10T15:19:35.219597+08:00",
+      "wxNotified": false
+    },
+    {
+      "id": "t_1783665694566_084xnd",
+      "title": "给何喆上课",
+      "dueDate": "2026-07-11T13:30",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "这个周六下午 1:30 要给何喆上课哦，别忘了。",
+      "createdAt": "2026-07-10T06:41:34.566Z"
+    },
+    {
+      "id": "t_1783674305663_lgnly3",
+      "title": "测试",
+      "dueDate": "2026-07-10T17:05",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "我只是做个测试。现在就立刻提醒我一下。",
+      "createdAt": "2026-07-10T09:05:05.663Z"
+    }
+  ],
+  "updatedAt": "2026-07-10T09:05:05.667Z"
 }
