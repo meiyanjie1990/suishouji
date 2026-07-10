@@ -44,6 +44,9 @@ jobs:
                   continue
               try:
                   due_date = datetime.fromisoformat(due_str)
+                  # Make it timezone-aware (Beijing time) for comparison
+                  if due_date.tzinfo is None:
+                      due_date = due_date.replace(tzinfo=tz)
               except:
                   continue
 
