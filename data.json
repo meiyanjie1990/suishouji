@@ -24,7 +24,7 @@
       "title": "带宝宝去打疫苗",
       "dueDate": "2026-07-10T18:00",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "下午 6 点带宝宝去打疫苗。",
       "createdAt": "2026-07-10T09:35:13.375Z"
     },
@@ -38,5 +38,5 @@
       "createdAt": "2026-07-10T09:54:38.541Z"
     }
   ],
-  "updatedAt": "2026-07-10T09:54:38.548Z"
+  "updatedAt": "2026-07-10T09:54:43.210Z"
 }
