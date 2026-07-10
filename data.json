@@ -18,7 +18,16 @@
       "status": "pending",
       "rawInput": "明天下午 5 点给 Susan 发一个课件",
       "createdAt": "2026-07-10T09:34:27.870Z"
+    },
+    {
+      "id": "t_1783676113375_2njfmz",
+      "title": "带宝宝去打疫苗",
+      "dueDate": "2026-07-10T18:00",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "下午 6 点带宝宝去打疫苗。",
+      "createdAt": "2026-07-10T09:35:13.375Z"
     }
   ],
-  "updatedAt": "2026-07-10T09:34:55.808Z"
+  "updatedAt": "2026-07-10T09:35:13.375Z"
 }
