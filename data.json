@@ -9,7 +9,25 @@
       "rawInput": "我做个测试，1 分钟之后提醒我喝点水。",
       "createdAt": "2026-07-10T09:19:12.544Z",
       "wxNotified": true
+    },
+    {
+      "id": "t_1783675323604_gv3w8q",
+      "title": "提醒喝水",
+      "dueDate": "2026-07-10T17:30",
+      "hasTime": true,
+      "status": "done",
+      "rawInput": "那我再尝试一下，8 分钟之后提醒我再喝点水。",
+      "createdAt": "2026-07-10T09:22:03.605Z"
+    },
+    {
+      "id": "t_1783676067870_9i51y7",
+      "title": "给Susan发课件",
+      "dueDate": "2026-07-11T17:00",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "明天下午 5 点给 Susan 发一个课件",
+      "createdAt": "2026-07-10T09:34:27.870Z"
     }
   ],
-  "updatedAt": "2026-07-10T17:21:37.589702+08:00"
+  "updatedAt": "2026-07-10T09:34:50.557Z"
 }
