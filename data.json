@@ -7,8 +7,9 @@
       "hasTime": true,
       "status": "pending",
       "rawInput": "8 点钟的时候提醒我发一下朋友圈。",
-      "createdAt": "2026-07-10T09:54:38.541Z"
+      "createdAt": "2026-07-10T09:54:38.541Z",
+      "wxNotified": true
     }
   ],
-  "updatedAt": "2026-07-10T11:26:15.705Z"
+  "updatedAt": "2026-07-10T20:11:00.096212+08:00"
 }
