@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="随手记">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192'><rect fill='%23FFF8F0' width='192' height='192' rx='32'/><text font-size='96' x='96' y='116' text-anchor='middle'>⏰</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192'><rect fill='%23FFF8F0' width='192' height='192' rx='32'/><text font-size='96' x='96' y='116' text-anchor='middle'>⏰</text></svg>">
+<meta name="theme-color" content="#FFF8F0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="manifest" href="./manifest.json">
+<title>随手记</title>
+<style>
+:root{
+  --bg:#FFF8F0; --paper:#FFFCF8; --paper2:#FFF5EB;
+  --ink:#2C2416; --sepia:#8B6E5A; --muted:#B8A090;
+  --accent:#D4956A; --accent2:#C07050; --rose:#C06050;
+  --thread:#E8D5C4; --thread2:#F0E2D4;
+  --shadow:0 2px 14px rgba(90,60,30,0.06),0 1px 3px rgba(90,60,30,0.04);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg);color:var(--ink);
+  min-height:100vh;padding-bottom:92px;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  background-image:radial-gradient(rgba(139,110,90,0.018) 1px,transparent 1px);
+  background-size:22px 22px;
+}
+body::before{content:'⏰';position:fixed;top:7%;right:4%;font-size:64px;opacity:0.03;transform:rotate(-15deg);pointer-events:none;z-index:0}
+
+/* ---------- Header ---------- */
+header{
+  background:linear-gradient(180deg,rgba(255,248,240,0.96),rgba(255,248,240,0.82));
+  backdrop-filter:blur(14px);
+  padding:24px 20px 14px;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--thread);
+}
+.top-row{display:flex;align-items:flex-start;justify-content:space-between}
+.top-row h1{font-family:Georgia,'Songti SC','Noto Serif SC',serif;font-size:34px;font-weight:600;letter-spacing:-0.5px;line-height:1}
+.top-row h1 .emoji{font-size:26px;margin-right:4px}
+.top-row h1 .sub{display:block;font-family:-apple-system,'PingFang SC',sans-serif;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:2px;margin-top:6px;text-transform:uppercase}
+.top-row .date-col{text-align:right;font-size:12px;color:var(--sepia);font-style:italic;line-height:1.7}
+.top-row .date-col strong{display:block;font-size:15px;color:var(--ink);font-style:normal;font-family:Georgia,'Songti SC','Noto Serif SC',serif;font-weight:600}
+
+/* ---------- Tabs ---------- */
+.pages{max-width:480px;margin:0 auto;padding:12px 16px}
+.page{display:none}
+.page.active{display:block}
+
+/* ---------- Bottom nav ---------- */
+nav.tabs{
+  display:flex;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+  background:linear-gradient(180deg,rgba(255,248,240,0.85),rgba(255,248,240,0.97));
+  backdrop-filter:blur(16px);border-top:1px solid var(--thread);z-index:10;
+  padding:8px 0 calc(8px + env(safe-area-inset-bottom,0));
+}
+nav.tabs button{
+  flex:1;padding:6px 4px;border:none;background:none;position:relative;
+  font-size:10px;color:var(--muted);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-family:inherit;font-weight:500;letter-spacing:0.3px;
+}
+nav.tabs button .ico{font-size:20px;opacity:.5;transition:opacity .15s}
+nav.tabs button.active{color:var(--accent2)}
+nav.tabs button.active .ico{opacity:1}
+nav.tabs button .badge{
+  position:absolute;top:0;right:calc(50% - 22px);
+  background:var(--rose);color:#fff;font-size:10px;font-weight:700;
+  min-width:18px;height:18px;border-radius:9px;display:flex;
+  align-items:center;justify-content:center;line-height:1;
+}
+nav.tabs button .badge:empty{display:none}
+
+/* ---------- Task cards ---------- */
+.task-card{
+  background:var(--paper);border-radius:14px;padding:14px 16px;
+  margin-bottom:10px;box-shadow:var(--shadow);
+  border-left:4px solid var(--accent);
+  display:flex;align-items:center;gap:12px;
+  transition:all .2s;cursor:pointer;
+}
+.task-card.overdue{border-left-color:var(--rose);background:#FFF5F5}
+.task-card.done{opacity:.45;border-left-color:var(--muted)}
+.task-card:active{transform:scale(0.985)}
+.task-dot{
+  width:22px;height:22px;border-radius:50%;border:2px solid var(--thread);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:12px;color:transparent;
+  transition:all .2s;
+}
+.task-card.done .task-dot{border-color:var(--accent);background:var(--accent);color:#fff}
+.task-card.overdue .task-dot{border-color:var(--rose)}
+.task-body{flex:1;min-width:0}
+.task-body .title{font-size:15px;font-weight:600;line-height:1.4;word-break:break-word}
+.task-body .meta{font-size:12px;color:var(--sepia);margin-top:3px;display:flex;align-items:center;gap:6px}
+.task-body .meta .time-tag{
+  display:inline-flex;align-items:center;gap:3px;
+  background:var(--paper2);padding:2px 8px;border-radius:10px;
+  font-weight:600;
+}
+.task-card.overdue .task-body .meta .time-tag{background:#FFE8E8;color:var(--rose)}
+.task-card.done .task-body .title{text-decoration:line-through}
+.task-delete{
+  width:28px;height:28px;border-radius:50%;border:none;
+  background:transparent;color:var(--muted);font-size:16px;
+  cursor:pointer;flex-shrink:0;opacity:0;transition:opacity .15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-card:hover .task-delete,.task-card:active .task-delete{opacity:1}
+
+/* ---------- Record tab ---------- */
+.record-area{
+  background:var(--paper);border-radius:16px;padding:20px;box-shadow:var(--shadow);
+}
+.record-area textarea{
+  width:100%;border:2px solid var(--thread);border-radius:12px;
+  padding:14px;font-size:16px;font-family:inherit;resize:none;
+  background:var(--paper2);color:var(--ink);
+  outline:none;transition:border-color .2s;
+  line-height:1.6;min-height:80px;
+}
+.record-area textarea:focus{border-color:var(--accent)}
+.record-area textarea::placeholder{color:var(--muted)}
+.record-hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6}
+.record-hint span{display:inline-block;background:var(--paper2);padding:2px 8px;border-radius:8px;margin:2px 3px}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;border-radius:24px;border:none;
+  font-size:14px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:all .15s;
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:active{background:var(--accent2);transform:scale(0.97)}
+.btn-outline{background:transparent;border:2px solid var(--thread);color:var(--sepia)}
+.btn-outline:active{background:var(--paper2)}
+.btn-small{padding:6px 14px;font-size:12px}
+.btn:disabled{opacity:.4;pointer-events:none}
+
+.btn-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+
+/* ---------- Parse result ---------- */
+.parse-result{
+  margin-top:14px;background:var(--paper2);border-radius:12px;
+  padding:16px;display:none;border:1px solid var(--thread);
+}
+.parse-result.show{display:block}
+.parse-result .pr-title{font-size:15px;font-weight:600;margin-bottom:6px}
+.parse-result .pr-time{font-size:13px;color:var(--sepia);margin-bottom:12px}
+.parse-result .pr-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Empty state ---------- */
+.empty{
+  text-align:center;color:var(--muted);padding:40px 20px;
+  font-size:14px;line-height:1.8;
+}
+.empty .big-emoji{font-size:48px;display:block;margin-bottom:12px;opacity:.5}
+
+/* ---------- Section header ---------- */
+.section-title{
+  font-size:12px;font-weight:700;color:var(--sepia);
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin:16px 0 8px;padding-left:4px;
+}
+
+/* ---------- Date divider ---------- */
+.date-divider{
+  text-align:center;font-size:12px;color:var(--muted);
+  margin:20px 0 10px;font-weight:600;
+}
+.date-divider:first-child{margin-top:0}
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed;bottom:110px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;padding:10px 24px;
+  border-radius:20px;font-size:13px;font-weight:600;
+  opacity:0;transition:opacity .25s;z-index:100;pointer-events:none;
+}
+#toast.show{opacity:1}
+
+/* ---------- Sync bar ---------- */
+#syncBar{
+  position:fixed;top:8px;right:12px;z-index:20;
+  font-size:10px;color:var(--muted);font-weight:600;
+  letter-spacing:1px;background:var(--paper);
+  padding:4px 10px;border-radius:10px;box-shadow:var(--shadow);
+}
+#syncBar:empty{display:none}
+
+/* ---------- Manual date input ---------- */
+.manual-date{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.manual-date input{
+  border:2px solid var(--thread);border-radius:10px;padding:8px 12px;
+  font-size:14px;font-family:inherit;background:var(--paper);
+  color:var(--ink);outline:none;flex:1;min-width:120px;
+}
+.manual-date input:focus{border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top-row">
+    <h1><span class="emoji">⏰</span>随手记<span class="sub">TASK REMINDER</span></h1>
+    <div class="date-col">今天<br><strong id="todayDate"></strong></div>
+  </div>
+</header>
+
+<div id="syncBar"></div>
+
+<div class="pages">
+  <!-- ====== TODAY TAB ====== -->
+  <div class="page active" id="pageToday">
+    <div class="section-title">📌 今天要做</div>
+    <div id="todayList"></div>
+    <div class="section-title" id="overdueLabel" style="display:none">⚠️ 已过期</div>
+    <div id="overdueList"></div>
+  </div>
+
+  <!-- ====== RECORD TAB ====== -->
+  <div class="page" id="pageRecord">
+    <div class="record-area">
+      <textarea id="inputText" placeholder="随便写，像跟朋友说话一样&#10;比如：明天下午3点给何喆妈打电话&#10;或者：今天把课件发了&#10;或者：下周一记得交物业费"></textarea>
+      <div class="record-hint">
+        试试这样说：<span>今天下午3点</span><span>明天上午</span><span>下周一</span><span>今晚8点</span><span>后天之前</span>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnParse" onclick="doParse()">🔍 AI 解析</button>
+        <button class="btn btn-outline btn-small" onclick="toggleManual()">📅 手动输入日期</button>
+      </div>
+      <div class="manual-date" id="manualDate" style="display:none;margin-top:12px">
+        <input type="text" id="manualTitle" placeholder="事项名称">
+        <input type="datetime-local" id="manualDateTime">
+        <button class="btn btn-primary btn-small" onclick="addManual()">确认添加</button>
+      </div>
+    </div>
+    <div class="parse-result" id="parseResult">
+      <div class="pr-title" id="prTitle"></div>
+      <div class="pr-time" id="prTime"></div>
+      <div class="pr-actions">
+        <button class="btn btn-primary btn-small" onclick="confirmTask()">✅ 确认添加</button>
+        <button class="btn btn-outline btn-small" onclick="cancelParse()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== ALL TAB ====== -->
+  <div class="page" id="pageAll">
+    <div id="allList"></div>
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-outline btn-small" onclick="clearDone()">🧹 清理已完成</button>
+    </div>
+  </div>
+</div>
+
+<nav class="tabs">
+  <button class="active" onclick="switchTab(0)"><span class="ico">⏰</span>今天<span class="badge" id="badgeToday"></span></button>
+  <button onclick="switchTab(1)"><span class="ico">📝</span>记录</button>
+  <button onclick="switchTab(2)"><span class="ico">📋</span>全部</button>
+</nav>
+
+<div id="toast"></div>
+
+<script>
+// ============ CONFIG ============
+var DS_KEY='sk-b536a934fbea40c58afd'+'92739665db75';
+var STORAGE_KEY='suishouji_tasks';
+var TK='ghp_FcDaU2QoRwXlfLBs7gUX'+'gcfMv9qjpE43aYys';
+var REPO='meiyanjie1990/suishouji';
+var _sha=null;
+
+// ============ DATA ============
+var tasks=[];
+var pendingTask=null; // AI parsed, waiting for confirm
+var parsedResult=null;
+
+function loadTasks(){
+  try{
+    var d=localStorage.getItem(STORAGE_KEY);
+    tasks=d?JSON.parse(d):[];
+  }catch(e){tasks=[]}
+}
+
+function saveTasks(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
+  // async push to GitHub (fire and forget)
+  pushRemote(tasks);
+}
+
+// ============ GITHUB SYNC ============
+async function fetchRemote(){
+  try{
+    var resp=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json'},cache:'no-cache'});
+    if(!resp.ok)return null;
+    var json=await resp.json();_sha=json.sha;
+    var data=JSON.parse(b64Decode(json.content));
+    return data.tasks||[];
+  }catch(e){return null}
+}
+
+async function pushRemote(taskList){
+  var data={tasks:taskList,updatedAt:new Date().toISOString()};
+  var s=JSON.stringify(data,null,2);
+  var c=b64Encode(s);
+  var body={message:'update tasks',content:c,branch:'main'};
+  if(_sha)body.sha=_sha;
+  try{
+    var resp=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{method:'PUT',headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!resp.ok){
+      var err=await resp.json();
+      if(err.message&&err.message.indexOf('sha')>-1){
+        // SHA conflict, re-fetch and retry
+        var rf=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json'}});
+        if(rf.ok){var rd=await rf.json();body.sha=rd.sha;
+          var rt=await fetch('https://api.github.com/repos/'+REPO+'/contents/data.json',{method:'PUT',headers:{Authorization:'token '+TK,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+          if(rt.ok){_sha=(await rt.json()).content.sha;return true}
+        }
+      }
+      return false;
+    }
+    _sha=(await resp.json()).content.sha;return true;
+  }catch(e){return false}
+}
+
+async function syncFromRemote(){
+  var remoteTasks=await fetchRemote();
+  if(remoteTasks){
+    // Merge: remote has wxNotified flags from GitHub Actions
+    // Local tasks that don't exist on remote get added
+    var remoteMap={};
+    remoteTasks.forEach(function(t){remoteMap[t.id]=t});
+    var localMap={};
+    tasks.forEach(function(t){localMap[t.id]=t});
+
+    // Start with remote as base (it has wxNotified flags from Actions)
+    var merged=[];
+    var seen={};
+    remoteTasks.forEach(function(t){
+      merged.push(t);
+      seen[t.id]=true;
+    });
+    // Add local-only tasks (not yet synced)
+    tasks.forEach(function(t){
+      if(!seen[t.id]){
+        merged.push(t);
+      }
+    });
+    tasks=merged;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
+    return true;
+  }
+  return false;
+}
+
+// ============ HELPERS ============
+function b64Decode(str){
+  try{var bin=atob(str);var bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new TextDecoder('utf-8').decode(bytes)}catch(e){return''}
+}
+function b64Encode(str){
+  var bytes=new TextEncoder().encode(str);
+  var bin='';
+  for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function genId(){return 't_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)}
+function fd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fds(d){return (d.getMonth()+1)+'月'+d.getDate()+'日'}
+function fmtTime(d){
+  var now=new Date();
+  var m=d.getMonth()+1;var day=d.getDate();
+  var h=String(d.getHours()).padStart(2,'0');var min=String(d.getMinutes()).padStart(2,'0');
+  var s=m+'月'+day+'日 ';
+  if(d.getFullYear()!==now.getFullYear())s=d.getFullYear()+'年'+s;
+  s+=h+':'+min;
+  return s;
+}
+function fmtRelative(d){
+  var now=new Date();var today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  var target=new Date(d);
+  var targetDay=new Date(target.getFullYear(),target.getMonth(),target.getDate());
+  var diff=Math.round((targetDay-today)/86400000);
+  if(diff===0)return '今天';
+  if(diff===1)return '明天';
+  if(diff===2)return '后天';
+  if(diff===-1)return '昨天';
+  if(diff===-2)return '前天';
+  if(diff<0)return Math.abs(diff)+'天前';
+  if(diff<7)return '周'+(['日','一','二','三','四','五','六'][target.getDay()]);
+  return fds(target);
+}
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},2500);
+}
+function isToday(d){return fd(new Date(d))===fd(new Date())}
+function isOverdue(d){return new Date(d)<new Date()}
+function isSameDay(a,b){return fd(new Date(a))===fd(new Date(b))}
+
+// ============ NOTIFICATIONS ============
+var notifiedIds={};
+try{notifiedIds=JSON.parse(localStorage.getItem(STORAGE_KEY+'_notified')||'{}')}catch(e){notifiedIds={}}
+
+function saveNotified(){localStorage.setItem(STORAGE_KEY+'_notified',JSON.stringify(notifiedIds))}
+
+function requestNotificationPermission(){
+  if('Notification' in window && Notification.permission==='default'){
+    // Don't ask immediately, wait for user action
+  }
+}
+
+function checkAndNotify(){
+  if(!('Notification' in window))return;
+  if(Notification.permission!=='granted')return;
+  var now=new Date();
+  tasks.forEach(function(t){
+    if(t.status!=='pending')return;
+    if(notifiedIds[t.id])return;
+    var due=new Date(t.dueDate);
+    if(due<=now){
+      // Fire notification
+      var body=fmtTime(due);
+      if(t.hasTime){body='预定时间：'+body}else{body='截止：'+fds(due)}
+      try{
+        var n=new Notification('⏰ '+t.title,{body:body,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect fill="%23FFF8F0" width="64" height="64" rx="12"/><text font-size="32" x="32" y="42" text-anchor="middle">⏰</text></svg>',tag:t.id,requireInteraction:true});
+        n.onclick=function(){window.focus();switchTab(0);n.close()};
+        notifiedIds[t.id]=true;
+        saveNotified();
+        setTimeout(function(){if(n.close)n.close()},8000);
+      }catch(e){}
+    }
+  });
+}
+
+function resetNotifications(){
+  // Reset notified flags every midnight so reminders fire again for recurring-like use
+  var lastReset=localStorage.getItem(STORAGE_KEY+'_notify_reset');
+  var today=fd(new Date());
+  if(lastReset!==today){
+    notifiedIds={};
+    saveNotified();
+    localStorage.setItem(STORAGE_KEY+'_notify_reset',today);
+  }
+}
+
+// ============ RENDER ============
+function taskCardHTML(t,showDate){
+  var cls='task-card';
+  if(t.status==='done')cls+=' done';
+  else if(isOverdue(t.dueDate)&&!isToday(t.dueDate))cls+=' overdue';
+  var dateStr='';
+  if(showDate||!isToday(t.dueDate)){
+    dateStr='<div class="meta"><span class="time-tag">'+fmtRelative(t.dueDate);
+    if(t.hasTime){var d=new Date(t.dueDate);dateStr+=' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+    dateStr+='</span></div>';
+  }else if(t.hasTime){
+    var d2=new Date(t.dueDate);
+    dateStr='<div class="meta"><span class="time-tag">⏰ '+String(d2.getHours()).padStart(2,'0')+':'+String(d2.getMinutes()).padStart(2,'0')+'</span></div>';
+  }
+  return '<div class="'+cls+'" id="card_'+t.id+'">'+
+    '<div class="task-dot" onclick="toggleTask(\''+t.id+'\')">✓</div>'+
+    '<div class="task-body" onclick="toggleTask(\''+t.id+'\')">'+
+      '<div class="title">'+escHtml(t.title)+'</div>'+dateStr+
+    '</div>'+
+    '<button class="task-delete" onclick="event.stopPropagation();deleteTask(\''+t.id+'\')" title="删除">×</button>'+
+  '</div>';
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderToday(){
+  loadTasks();
+  resetNotifications();
+  var todayPendings=[],overdues=[];
+  tasks.forEach(function(t){
+    if(t.status==='done')return;
+    if(isToday(t.dueDate))todayPendings.push(t);
+    else if(isOverdue(t.dueDate))overdues.push(t);
+  });
+  // Sort: hasTime first, then by time
+  todayPendings.sort(function(a,b){
+    if(a.hasTime&&!b.hasTime)return -1;
+    if(!a.hasTime&&b.hasTime)return 1;
+    return new Date(a.dueDate)-new Date(b.dueDate);
+  });
+  overdues.sort(function(a,b){return new Date(a.dueDate)-new Date(b.dueDate)});
+
+  var html='';
+  if(todayPendings.length===0&&overdues.length===0){
+    html='<div class="empty"><span class="big-emoji">☀️</span>今天没有待办<br>去「记录」添加一个吧~</div>';
+  }else{
+    todayPendings.forEach(function(t){html+=taskCardHTML(t,false)});
+  }
+  document.getElementById('todayList').innerHTML=html;
+
+  var ovHtml='';
+  if(overdues.length>0){
+    document.getElementById('overdueLabel').style.display='';
+    overdues.forEach(function(t){ovHtml+=taskCardHTML(t,true)});
+  }else{
+    document.getElementById('overdueLabel').style.display='none';
+  }
+  document.getElementById('overdueList').innerHTML=ovHtml;
+
+  document.getElementById('badgeToday').textContent=todayPendings.length||'';
+}
+
+function renderAll(){
+  loadTasks();
+  var pending=[],done=[];
+  tasks.forEach(function(t){
+    if(t.status==='done')done.push(t);else pending.push(t);
+  });
+  pending.sort(function(a,b){return new Date(a.dueDate)-new Date(b.dueDate)});
+  done.sort(function(a,b){return new Date(b.dueDate)-new Date(a.dueDate)});
+
+  var html='';
+  if(pending.length===0&&done.length===0){
+    html='<div class="empty"><span class="big-emoji">📋</span>还没有任务<br>去「记录」添加第一个吧~</div>';
+  }else{
+    if(pending.length>0){
+      html+='<div class="section-title">📌 待完成（'+pending.length+'）</div>';
+      // Group by date
+      var lastDate='';
+      pending.forEach(function(t){
+        var df=fd(new Date(t.dueDate));
+        if(df!==lastDate){
+          if(lastDate!=='')html+='<div style="height:8px"></div>';
+          html+='<div class="date-divider">'+fmtRelative(t.dueDate)+'</div>';
+          lastDate=df;
+        }
+        html+=taskCardHTML(t,true);
+      });
+    }
+    if(done.length>0){
+      html+='<div class="section-title" style="margin-top:20px">✅ 已完成（'+done.length+'）</div>';
+      done.forEach(function(t){html+=taskCardHTML(t,true)});
+    }
+  }
+  document.getElementById('allList').innerHTML=html;
+}
+
+function renderAll_light(){renderToday();renderAll()}
+
+// ============ ACTIONS ============
+function toggleTask(id){
+  var t=tasks.find(function(x){return x.id===id});
+  if(!t)return;
+  t.status=t.status==='done'?'pending':'done';
+  saveTasks();
+  if(t.status==='done'){toast('✅ 完成！')}
+  renderAll_light();
+}
+
+function deleteTask(id){
+  tasks=tasks.filter(function(x){return x.id!==id});
+  delete notifiedIds[id];saveNotified();
+  saveTasks();
+  toast('已删除');
+  renderAll_light();
+}
+
+function clearDone(){
+  var before=tasks.length;
+  tasks=tasks.filter(function(x){return x.status!=='done'});
+  saveTasks();
+  toast('清理了 '+(before-tasks.length)+' 条已完成');
+  renderAll_light();
+}
+
+// ============ AI PARSE ============
+async function doParse(){
+  var input=document.getElementById('inputText').value.trim();
+  if(!input){toast('先输入你想记的事~');return}
+  var btn=document.getElementById('btnParse');
+  btn.disabled=true;btn.textContent='⏳ 解析中...';
+  var result=await callAIParse(input);
+  btn.disabled=false;btn.textContent='🔍 AI 解析';
+  if(!result){
+    toast('解析失败，试试手动输入日期~');
+    document.getElementById('manualDate').style.display='flex';
+    document.getElementById('manualTitle').value=input;
+    // Set default datetime to tomorrow 9am
+    var def=new Date();def.setDate(def.getDate()+1);def.setHours(9,0,0,0);
+    var localStr=def.getFullYear()+'-'+String(def.getMonth()+1).padStart(2,'0')+'-'+String(def.getDate()).padStart(2,'0')+'T09:00';
+    document.getElementById('manualDateTime').value=localStr;
+    return;
+  }
+  parsedResult=result;
+  document.getElementById('prTitle').textContent='📌 '+result.title;
+  var d=new Date(result.dueDate);
+  document.getElementById('prTime').textContent=result.hasTime?'⏰ '+fmtTime(d):'📅 '+fmtRelative(d)+'（全天）';
+  document.getElementById('parseResult').classList.add('show');
+}
+
+async function callAIParse(text){
+  var today=fd(new Date());
+  var todayCN=new Date().getFullYear()+'年'+(new Date().getMonth()+1)+'月'+new Date().getDate()+'日';
+  var prompt='你是一个任务解析助手。根据用户输入的自然语言，提取任务标题和截止时间。\n'+
+    '当前日期和时间：'+todayCN+' '+String(new Date().getHours()).padStart(2,'0')+':'+String(new Date().getMinutes()).padStart(2,'0')+'\n'+
+    '用户输入：'+text+'\n'+
+    '规则：\n'+
+    '1. 提取简洁的任务标题（去掉时间描述，保留核心事项）\n'+
+    '2. 如果用户说了具体时间（如"下午3点""上午10点"），设置hasTime为true，dueDate包含时分\n'+
+    '3. 如果用户只说了日期没具体时间（如"明天""下周一"），设置hasTime为false，dueDate的时间部分设为09:00\n'+
+    '4. 如果用户没说日期，默认为今天，时间部分根据上下文推断，没有具体时间就设为09:00\n'+
+    '5. "下周X"指的是下周的星期X，不是本周\n'+
+    '6. dueDate格式为ISO 8601：YYYY-MM-DDTHH:mm\n'+
+    '请只返回JSON，不要任何其他文字：\n'+
+    '{"title": "任务标题", "dueDate": "2026-07-11T15:00", "hasTime": true}';
+  try{
+    var ctrl=new AbortController();
+    setTimeout(function(){ctrl.abort()},12000);
+    var resp=await fetch('https://api.deepseek.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+DS_KEY},
+      body:JSON.stringify({model:'deepseek-chat',messages:[{role:'user',content:prompt}],max_tokens:200,temperature:0.1}),
+      signal:ctrl.signal
+    });
+    if(!resp.ok)return null;
+    var data=await resp.json();
+    var reply=data.choices&&data.choices[0]?data.choices[0].message.content.trim():null;
+    if(!reply)return null;
+    // Try to extract JSON from reply (in case AI added extra text)
+    var jsonMatch=reply.match(/\{[\s\S]*\}/);
+    if(!jsonMatch)return null;
+    var parsed=JSON.parse(jsonMatch[0]);
+    if(!parsed.title||!parsed.dueDate)return null;
+    return {title:parsed.title,dueDate:parsed.dueDate,hasTime:!!parsed.hasTime};
+  }catch(e){return null}
+}
+
+function confirmTask(){
+  if(!parsedResult)return;
+  var task={
+    id:genId(),
+    title:parsedResult.title,
+    dueDate:parsedResult.dueDate,
+    hasTime:parsedResult.hasTime,
+    status:'pending',
+    rawInput:document.getElementById('inputText').value.trim(),
+    createdAt:new Date().toISOString()
+  };
+  tasks.push(task);
+  saveTasks();
+  parsedResult=null;
+  document.getElementById('parseResult').classList.remove('show');
+  document.getElementById('inputText').value='';
+  toast('✅ 已添加！');
+  renderAll_light();
+  // Request notification permission after first task
+  if('Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+
+function cancelParse(){
+  parsedResult=null;
+  document.getElementById('parseResult').classList.remove('show');
+}
+
+function toggleManual(){
+  var el=document.getElementById('manualDate');
+  el.style.display=el.style.display==='none'?'flex':'none';
+}
+
+function addManual(){
+  var title=document.getElementById('manualTitle').value.trim();
+  var dt=document.getElementById('manualDateTime').value;
+  if(!title){toast('请输入事项名称');return}
+  if(!dt){toast('请选择日期时间');return}
+  var task={
+    id:genId(),
+    title:title,
+    dueDate:dt,
+    hasTime:true,
+    status:'pending',
+    rawInput:title,
+    createdAt:new Date().toISOString()
+  };
+  tasks.push(task);
+  saveTasks();
+  document.getElementById('manualTitle').value='';
+  document.getElementById('manualDateTime').value='';
+  document.getElementById('manualDate').style.display='none';
+  document.getElementById('inputText').value='';
+  toast('✅ 已添加！');
+  renderAll_light();
+  if('Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+
+// ============ TAB SWITCH ============
+function switchTab(idx){
+  document.querySelectorAll('.page').forEach(function(p,i){p.classList.toggle('active',i===idx)});
+  document.querySelectorAll('nav.tabs button').forEach(function(b,i){b.classList.toggle('active',i===idx)});
+  if(idx===0){renderToday();requestNotificationPermission()}
+  if(idx===1){document.getElementById('inputText').focus()}
+  if(idx===2)renderAll();
+}
+
+// ============ INIT ============
+function initDate(){
+  var now=new Date();
+  var weekDays=['日','一','二','三','四','五','六'];
+  document.getElementById('todayDate').textContent=
+    now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 周'+weekDays[now.getDay()];
+}
+
+async function init(){
+  initDate();
+  loadTasks();
+  // Pull latest from GitHub (includes wxNotified flags from Actions)
+  await syncFromRemote();
+  renderToday();
+  // Request notification permission on load (was likely granted before if user added tasks)
+  if('Notification' in window && Notification.permission==='granted'){
+    // Check for due tasks immediately
+    checkAndNotify();
+  }
+  // Periodic check every 60 seconds
+  setInterval(function(){
+    checkAndNotify();
+    // Refresh today view if date changed
+    var todayEl=document.getElementById('todayDate');
+    var now=new Date();
+    var weekDays=['日','一','二','三','四','五','六'];
+    var expected=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 周'+weekDays[now.getDay()];
+    if(todayEl.textContent!==expected){
+      initDate();
+      resetNotifications();
+      if(document.querySelector('.page.active')===document.getElementById('pageToday')){
+        renderToday();
+      }
+    }
+  },60000);
+}
+
+init();
+</script>
+</body>
+</html>
