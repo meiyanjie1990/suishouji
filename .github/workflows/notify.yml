@@ -62,27 +62,27 @@ jobs:
                       body = f"[截止] {due_date.strftime('%m/%d')}"
 
                   msg_data = json.dumps({
-                      "appToken": "AT_84J8kQE5oYtE9x9TSCNDoXmV31LFLv6J",
-                      "content": f"⏰ {title}\n{body}\n\n→ 打开随手记查看",
-                      "contentType": 1,
-                      "uids": ["UID_O2fhswuVShCjJi92Za9g58R708mt"]
+                      "token": "d3f83e6113a442efa482e00eb23ae07d",
+                      "title": title,
+                      "content": f"⏰ {title}<br>{body}<br><br>→ 打开随手记查看",
+                      "template": "html"
                   }, ensure_ascii=False).encode('utf-8')
 
                   try:
                       req = urllib.request.Request(
-                          'https://wxpusher.zjiecode.com/api/send/message',
+                          'https://www.pushplus.plus/send',
                           data=msg_data,
                           headers={'Content-Type': 'application/json'}
                       )
                       resp = urllib.request.urlopen(req, timeout=10)
                       result = json.loads(resp.read())
-                      if result.get('code') == 1000:
+                      if result.get('code') == 200:
                           task['wxNotified'] = True
                           updated = True
                           sent_count += 1
                           print(f"[OK] sent: {title}")
                       else:
-                          print(f"[ERR] WxPusher: {result}")
+                          print(f"[ERR] PushPlus: {result}")
                   except Exception as e:
                       print(f"[ERR] {title}: {e}")
 
