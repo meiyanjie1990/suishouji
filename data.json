@@ -27,7 +27,16 @@
       "status": "pending",
       "rawInput": "下午 6 点带宝宝去打疫苗。",
       "createdAt": "2026-07-10T09:35:13.375Z"
+    },
+    {
+      "id": "t_1783677278541_nu996x",
+      "title": "发朋友圈",
+      "dueDate": "2026-07-10T20:00",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "8 点钟的时候提醒我发一下朋友圈。",
+      "createdAt": "2026-07-10T09:54:38.541Z"
     }
   ],
-  "updatedAt": "2026-07-10T09:35:17.967Z"
+  "updatedAt": "2026-07-10T09:54:38.548Z"
 }
