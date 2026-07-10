@@ -15,7 +15,7 @@
       "title": "给Susan发课件",
       "dueDate": "2026-07-11T17:00",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "明天下午 5 点给 Susan 发一个课件",
       "createdAt": "2026-07-10T09:34:27.870Z"
     },
@@ -38,5 +38,5 @@
       "createdAt": "2026-07-10T09:54:38.541Z"
     }
   ],
-  "updatedAt": "2026-07-10T09:54:43.210Z"
+  "updatedAt": "2026-07-10T09:54:47.422Z"
 }
