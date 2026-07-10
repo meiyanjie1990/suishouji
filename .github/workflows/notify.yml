@@ -1,5 +1,8 @@
 name: 微信提醒
 on:
+  push:
+    paths:
+      - 'data.json'
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
