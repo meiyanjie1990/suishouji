@@ -8,8 +8,8 @@
       "status": "pending",
       "rawInput": "测试微信推送",
       "createdAt": "2026-07-10T15:19:35.219597+08:00",
-      "wxNotified": false
+      "wxNotified": true
     }
   ],
-  "updatedAt": "2026-07-10T15:19:35.219597+08:00"
+  "updatedAt": "2026-07-10T16:26:10.220717+08:00"
 }
