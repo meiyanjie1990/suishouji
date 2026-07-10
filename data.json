@@ -1,34 +1,6 @@
 {
   "tasks": [
     {
-      "id": "t_1783675152544_4gk909",
-      "title": "提醒我喝点水",
-      "dueDate": "2026-07-10T17:20",
-      "hasTime": true,
-      "status": "done",
-      "rawInput": "我做个测试，1 分钟之后提醒我喝点水。",
-      "createdAt": "2026-07-10T09:19:12.544Z",
-      "wxNotified": true
-    },
-    {
-      "id": "t_1783676067870_9i51y7",
-      "title": "给Susan发课件",
-      "dueDate": "2026-07-11T17:00",
-      "hasTime": true,
-      "status": "done",
-      "rawInput": "明天下午 5 点给 Susan 发一个课件",
-      "createdAt": "2026-07-10T09:34:27.870Z"
-    },
-    {
-      "id": "t_1783676113375_2njfmz",
-      "title": "带宝宝去打疫苗",
-      "dueDate": "2026-07-10T18:00",
-      "hasTime": true,
-      "status": "done",
-      "rawInput": "下午 6 点带宝宝去打疫苗。",
-      "createdAt": "2026-07-10T09:35:13.375Z"
-    },
-    {
       "id": "t_1783677278541_nu996x",
       "title": "发朋友圈",
       "dueDate": "2026-07-10T20:00",
@@ -38,5 +10,5 @@
       "createdAt": "2026-07-10T09:54:38.541Z"
     }
   ],
-  "updatedAt": "2026-07-10T09:54:47.422Z"
+  "updatedAt": "2026-07-10T09:54:50.576Z"
 }
