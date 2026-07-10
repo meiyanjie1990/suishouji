@@ -1,15 +1,14 @@
 {
   "tasks": [
     {
-      "id": "test_1783667975",
-      "title": "🎉 测试提醒 - 方案C跑通了！",
-      "dueDate": "2026-07-10T15:18",
+      "id": "t_1783677278541_nu996x",
+      "title": "发朋友圈",
+      "dueDate": "2026-07-10T20:00",
       "hasTime": true,
       "status": "pending",
-      "rawInput": "测试微信推送",
-      "createdAt": "2026-07-10T15:19:35.219597+08:00",
-      "wxNotified": false
+      "rawInput": "8 点钟的时候提醒我发一下朋友圈。",
+      "createdAt": "2026-07-10T09:54:38.541Z"
     }
   ],
-  "updatedAt": "2026-07-10T15:19:35.219597+08:00"
+  "updatedAt": "2026-07-10T11:26:15.705Z"
 }
