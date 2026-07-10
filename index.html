@@ -198,6 +198,60 @@ nav.tabs button .badge:empty{display:none}
   color:var(--ink);outline:none;flex:1;min-width:120px;
 }
 .manual-date input:focus{border-color:var(--accent)}
+
+/* ---------- Museum ---------- */
+.museum-stats{
+  display:flex;gap:8px;margin-bottom:16px;
+}
+.museum-stat{
+  flex:1;background:var(--paper);border-radius:14px;
+  padding:16px 12px;text-align:center;box-shadow:var(--shadow);
+}
+.museum-stat .num{
+  font-family:Georgia,'Songti SC',serif;
+  font-size:36px;font-weight:700;color:var(--accent2);
+  line-height:1.2;
+}
+.museum-stat .label{font-size:11px;color:var(--muted);margin-top:4px}
+.museum-card{
+  background:var(--paper);border-radius:12px;padding:14px 16px;
+  margin-bottom:8px;box-shadow:var(--shadow);
+  border-left:3px solid var(--muted);opacity:.7;
+  display:flex;align-items:center;gap:10px;
+}
+.museum-card .mc-icon{font-size:20px;flex-shrink:0}
+.museum-card .mc-body{flex:1;min-width:0}
+.museum-card .mc-title{font-size:14px;font-weight:600;text-decoration:line-through;word-break:break-word}
+.museum-card .mc-date{font-size:11px;color:var(--muted);margin-top:2px}
+.museum-timeline{margin-top:8px}
+.museum-month{
+  font-size:13px;font-weight:700;color:var(--sepia);
+  padding:8px 0 4px;letter-spacing:0.5px;
+}
+
+/* ---------- Reward popup ---------- */
+.reward-overlay{
+  position:fixed;inset:0;z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;opacity:0;transition:opacity .3s;
+}
+.reward-overlay.show{opacity:1;pointer-events:auto}
+.reward-card{
+  background:var(--paper);border-radius:20px;padding:28px 24px;
+  text-align:center;max-width:300px;width:85%;
+  box-shadow:0 8px 40px rgba(90,60,30,0.12),0 2px 8px rgba(90,60,30,0.06);
+  transform:translateY(20px) scale(.95);
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.reward-overlay.show .reward-card{transform:translateY(0) scale(1)}
+.reward-card .r-icon{font-size:48px;display:block;margin-bottom:8px}
+.reward-card .r-text{font-size:15px;color:var(--ink);line-height:1.7;margin-bottom:6px}
+.reward-card .r-source{font-size:12px;color:var(--muted);font-style:italic}
+.reward-card .r-close{
+  margin-top:14px;font-size:12px;color:var(--muted);
+  background:none;border:1px solid var(--thread);padding:6px 20px;
+  border-radius:14px;cursor:pointer;font-family:inherit;
+}
 </style>
 </head>
 <body>
@@ -254,13 +308,30 @@ nav.tabs button .badge:empty{display:none}
       <button class="btn btn-outline btn-small" onclick="clearDone()">🧹 清理已完成</button>
     </div>
   </div>
+
+  <!-- ====== MUSEUM TAB ====== -->
+  <div class="page" id="pageMuseum">
+    <div class="museum-stats" id="museumStats"></div>
+    <div class="museum-timeline" id="museumTimeline"></div>
+  </div>
 </div>
 
 <nav class="tabs">
   <button class="active" onclick="switchTab(0)"><span class="ico">⏰</span>今天<span class="badge" id="badgeToday"></span></button>
   <button onclick="switchTab(1)"><span class="ico">📝</span>记录</button>
   <button onclick="switchTab(2)"><span class="ico">📋</span>全部</button>
+  <button onclick="switchTab(3)"><span class="ico">🏛️</span>博物馆</button>
 </nav>
+
+<!-- Reward popup -->
+<div class="reward-overlay" id="rewardOverlay" onclick="closeReward()">
+  <div class="reward-card" onclick="event.stopPropagation()">
+    <span class="r-icon" id="rIcon"></span>
+    <div class="r-text" id="rText"></div>
+    <div class="r-source" id="rSource"></div>
+    <button class="r-close" onclick="closeReward()">收下 ✨</button>
+  </div>
+</div>
 
 <div id="toast"></div>
 
@@ -446,6 +517,96 @@ function resetNotifications(){
   }
 }
 
+// ============ REWARD SYSTEM ============
+var REWARDS=[
+  {icon:'☁️',text:'大理的云今天也很好看。',source:'—— 去看一眼'},
+  {icon:'🍵',text:'茶泡好了，你做得不错。',source:'—— 大理时间'},
+  {icon:'🌿',text:'Done is better than perfect.',source:'—— English teacher Mei'},
+  {icon:'💪',text:'又搞定一件事，P人今天不P！',source:'—— 自嘲时间'},
+  {icon:'🐾',text:'谦灵说：Mommy 好棒 💕',source:'—— 来自小监工'},
+  {icon:'📖',text:'The secret of getting ahead is getting started.',source:'—— Mark Twain'},
+  {icon:'✨',text:'一件小事也是向前一步。',source:'—— Mei的备忘录'},
+  {icon:'🌙',text:'不完美也没关系，做了就是赢了。',source:'—— P人心法'},
+  {icon:'🎐',text:'苍山的风刚好吹过来。',source:'—— 大理'},
+  {icon:'🌸',text:'It\'s a beautiful day to get things done.',source:'—— 今日宜行动'},
+  {icon:'🍬',text:'奖励自己一颗糖吧，你值得。',source:'—— 随手赏'},
+  {icon:'🏔️',text:'站远一点看，事情都不大。',source:'—— 苍山视角'},
+  {icon:'⛅',text:'今天的待办又少了一个。',source:'—— 进度条在动'},
+  {icon:'🎵',text:'Small steps, big journeys.',source:'—— Teacher Mei'},
+  {icon:'🫧',text:'做完就放下，别挂着了。',source:'—— 随手记'},
+];
+
+function showReward(){
+  var r=REWARDS[Math.floor(Math.random()*REWARDS.length)];
+  document.getElementById('rIcon').textContent=r.icon;
+  document.getElementById('rText').textContent=r.text;
+  document.getElementById('rSource').textContent=r.source;
+  document.getElementById('rewardOverlay').classList.add('show');
+  // Auto dismiss after 4s
+  clearTimeout(window._rewardTimer);
+  window._rewardTimer=setTimeout(closeReward,4000);
+}
+
+function closeReward(){
+  document.getElementById('rewardOverlay').classList.remove('show');
+  clearTimeout(window._rewardTimer);
+}
+
+// ============ MUSEUM ============
+function renderMuseum(){
+  loadTasks();
+  var doneTasks=tasks.filter(function(t){return t.status==='done'});
+  var doneCount=doneTasks.length;
+  var totalCount=tasks.length;
+
+  // Stats
+  var statsHtml='<div class="museum-stat"><div class="num">'+doneCount+'</div><div class="label">🏆 已完成</div></div>';
+  statsHtml+='<div class="museum-stat"><div class="num">'+totalCount+'</div><div class="label">📊 总计</div></div>';
+  var thisWeek=0;var now=new Date();var weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay()+1);weekStart.setHours(0,0,0,0);
+  doneTasks.forEach(function(t){
+    if(new Date(t.createdAt)>=weekStart)thisWeek++;
+  });
+  statsHtml+='<div class="museum-stat"><div class="num">'+thisWeek+'</div><div class="label">📅 本周</div></div>';
+  document.getElementById('museumStats').innerHTML=statsHtml;
+
+  // Timeline
+  if(doneCount===0){
+    document.getElementById('museumTimeline').innerHTML='<div class="empty"><span class="big-emoji">🏛️</span>博物馆还空着呢<br>去完成第一件事吧~</div>';
+    return;
+  }
+
+  // Sort by completion time (use createdAt as proxy), newest first
+  var sorted=doneTasks.slice().sort(function(a,b){
+    var da=a.completedAt||a.createdAt;
+    var db=b.completedAt||b.createdAt;
+    return new Date(db)-new Date(da);
+  });
+
+  var html='';
+  var lastMonth='';
+  var MONTHS=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  var icons=['🏺','📜','🗿','💎','🖼️','🏆','🎖️','⭐'];
+
+  sorted.forEach(function(t,i){
+    var d=new Date(t.completedAt||t.createdAt);
+    var m=MONTHS[d.getMonth()]+' '+d.getFullYear()+'年';
+    if(m!==lastMonth){
+      html+='<div class="museum-month">'+m+'</div>';
+      lastMonth=m;
+    }
+    var icon=icons[i%icons.length];
+    var dateStr=(d.getMonth()+1)+'月'+d.getDate()+'日';
+    html+='<div class="museum-card">'+
+      '<span class="mc-icon">'+icon+'</span>'+
+      '<div class="mc-body">'+
+        '<div class="mc-title">'+escHtml(t.title)+'</div>'+
+        '<div class="mc-date">'+dateStr+' 完成</div>'+
+      '</div>'+
+    '</div>';
+  });
+  document.getElementById('museumTimeline').innerHTML=html;
+}
+
 // ============ RENDER ============
 function taskCardHTML(t,showDate){
   var cls='task-card';
@@ -545,15 +706,21 @@ function renderAll(){
   document.getElementById('allList').innerHTML=html;
 }
 
-function renderAll_light(){renderToday();renderAll()}
+function renderAll_light(){renderToday();renderAll();renderMuseum()}
 
 // ============ ACTIONS ============
 function toggleTask(id){
   var t=tasks.find(function(x){return x.id===id});
   if(!t)return;
   t.status=t.status==='done'?'pending':'done';
-  saveTasks();
-  if(t.status==='done'){toast('✅ 完成！')}
+  if(t.status==='done'){
+    t.completedAt=new Date().toISOString();
+    saveTasks();
+    showReward();
+  }else{
+    t.completedAt=null;
+    saveTasks();
+  }
   renderAll_light();
 }
 
@@ -703,6 +870,7 @@ function switchTab(idx){
   if(idx===0){renderToday();requestNotificationPermission()}
   if(idx===1){document.getElementById('inputText').focus()}
   if(idx===2)renderAll();
+  if(idx===3)renderMuseum();
 }
 
 // ============ INIT ============
