@@ -85,25 +85,17 @@ jobs:
                   except Exception as e:
                       print(f"[ERR] {title}: {e}")
 
-          # Keep chain alive if there are pending tasks
+          # Keep chain alive whenever there are pending, non-notified tasks.
+          # No rate limiting — the chain sustains itself via PAT-backed pushes.
+          # When wxNotified is set for all pending tasks, chain stops naturally.
           pending_count = sum(1 for t in tasks if t.get('status')=='pending' and not t.get('wxNotified'))
-          if pending_count > 0:
-              # Only trigger next check if lastCheck was >4 min ago (avoid flooding)
-              last_check_str = data.get('lastCheck', '')
-              should_continue = True
-              if last_check_str:
-                  try:
-                      last_check = datetime.fromisoformat(last_check_str)
-                      if last_check.tzinfo is None: last_check = last_check.replace(tzinfo=tz)
-                      if (now - last_check).total_seconds() < 240:
-                          should_continue = False
-                  except: pass
-              if should_continue:
-                  data['lastCheck'] = now.isoformat()
-                  updated = True
+          if pending_count > 0 or sent_count > 0:
+              data['lastCheck'] = now.isoformat()
+              updated = True
+              if pending_count > 0:
                   print(f"Chain: {pending_count} pending, keep alive")
               else:
-                  print(f"Chain: {pending_count} pending, skip (too soon)")
+                  print(f"Chain: notified {sent_count}, commit to save flags")
           else:
               print(f"Chain: all clear, stop")
 
@@ -123,6 +115,9 @@ jobs:
           if [ -f CHANGED ]; then
             git config user.name "suishouji-bot"
             git config user.email "bot@suishouji.local"
+            # Use PAT for push — PAT-backed pushes trigger new workflow runs
+            # (GITHUB_TOKEN pushes are silently ignored by GitHub)
+            git remote set-url origin "https://x-access-token:${{ secrets.PUSH_TOKEN }}@github.com/${{ github.repository }}"
             git add data.json
             git commit -m "bot: check $(TZ='Asia/Shanghai' date +'%m/%d %H:%M')" || true
             git push
