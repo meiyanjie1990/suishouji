@@ -20,18 +20,8 @@
       "createdAt": "2026-07-10T15:16:29.348Z",
       "wxNotified": true,
       "completedAt": "2026-07-10T23:28:54.594Z"
-    },
-    {
-      "id": "t_test_1783768110889",
-      "title": "最终测试-19:08",
-      "dueDate": "2026-07-11T19:11",
-      "hasTime": true,
-      "status": "pending",
-      "rawInput": "最终验证 workflow_dispatch 自触发链",
-      "createdAt": "2026-07-11T19:08:30.889889+08:00",
-      "wxNotified": true
     }
   ],
-  "updatedAt": "2026-07-11T19:11:16.691665+08:00",
+  "updatedAt": "2026-07-11T19:14:59.432803+08:00",
   "lastCheck": "2026-07-11T19:11:16.691665+08:00"
 }
