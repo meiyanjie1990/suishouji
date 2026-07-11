@@ -1,38 +1,4 @@
 {
-  "tasks": [
-    {
-      "id": "t_1783686039683_ftj0z8",
-      "title": "实验二",
-      "dueDate": "2026-07-11T10:00",
-      "hasTime": true,
-      "status": "done",
-      "rawInput": "明天早上 10 点帮我设定一个闹铃，叫做实验二。",
-      "createdAt": "2026-07-10T12:20:39.683Z",
-      "wxNotified": true,
-      "completedAt": "2026-07-11T11:17:47.044Z"
-    },
-    {
-      "id": "t_1783696589346_fmd2e0",
-      "title": "喊我一下",
-      "dueDate": "2026-07-10T23:31",
-      "hasTime": true,
-      "status": "done",
-      "rawInput": "15 分钟后喊我一下。",
-      "createdAt": "2026-07-10T15:16:29.348Z",
-      "wxNotified": true,
-      "completedAt": "2026-07-10T23:28:54.594Z"
-    },
-    {
-      "id": "t_1783768682537_lf4ddx",
-      "title": "提醒我",
-      "dueDate": "2026-07-11T20:17",
-      "hasTime": true,
-      "status": "done",
-      "rawInput": "1 个小时后提醒我一下。",
-      "createdAt": "2026-07-11T11:18:02.537Z",
-      "wxNotified": true,
-      "completedAt": "2026-07-11T12:17:22.276Z"
-    }
-  ],
-  "updatedAt": "2026-07-11T12:17:22.279Z"
+  "tasks": [],
+  "updatedAt": "2026-07-11T12:17:26.042Z"
 }
