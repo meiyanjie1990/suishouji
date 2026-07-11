@@ -28,9 +28,10 @@
       "hasTime": true,
       "status": "pending",
       "rawInput": "最终验证 workflow_dispatch 自触发链",
-      "createdAt": "2026-07-11T19:08:30.889889+08:00"
+      "createdAt": "2026-07-11T19:08:30.889889+08:00",
+      "wxNotified": true
     }
   ],
-  "updatedAt": "2026-07-11T19:10:39.299203+08:00",
-  "lastCheck": "2026-07-11T19:10:39.299203+08:00"
+  "updatedAt": "2026-07-11T19:11:16.691665+08:00",
+  "lastCheck": "2026-07-11T19:11:16.691665+08:00"
 }
