@@ -86,6 +86,7 @@ jobs:
                       print(f"[ERR] {title}: {e}")
 
           # Keep chain alive whenever there are pending, non-notified tasks.
+          # Chain sustains itself via workflow_dispatch API calls.
           # When wxNotified is set for all pending tasks, chain stops naturally.
           pending_count = sum(1 for t in tasks if t.get('status')=='pending' and not t.get('wxNotified'))
           if pending_count > 0 or sent_count > 0:
@@ -93,7 +94,6 @@ jobs:
               updated = True
               if pending_count > 0:
                   print(f"Chain: {pending_count} pending, keep alive")
-                  # Write marker file so the next step knows to dispatch
                   with open('KEEP_ALIVE', 'w') as f:
                       f.write('1')
               else:
@@ -127,6 +127,9 @@ jobs:
         if: success()
         run: |
           if [ -f KEEP_ALIVE ]; then
+            # Brief pause to avoid thrashing — chain stays alive but
+            # doesn't run wild (30s gap = ~2 runs/min when active)
+            sleep 30
             echo "Dispatching next check..."
             curl -s -X POST \
               -H "Authorization: token ${{ secrets.PUSH_TOKEN }}" \
@@ -134,5 +137,4 @@ jobs:
               "https://api.github.com/repos/${{ github.repository }}/actions/workflows/check.yml/dispatches" \
               -d '{"ref":"main"}'
             echo ""
-            echo "Dispatched."
           fi
