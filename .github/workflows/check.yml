@@ -86,7 +86,6 @@ jobs:
                       print(f"[ERR] {title}: {e}")
 
           # Keep chain alive whenever there are pending, non-notified tasks.
-          # No rate limiting — the chain sustains itself via PAT-backed pushes.
           # When wxNotified is set for all pending tasks, chain stops naturally.
           pending_count = sum(1 for t in tasks if t.get('status')=='pending' and not t.get('wxNotified'))
           if pending_count > 0 or sent_count > 0:
@@ -94,6 +93,9 @@ jobs:
               updated = True
               if pending_count > 0:
                   print(f"Chain: {pending_count} pending, keep alive")
+                  # Write marker file so the next step knows to dispatch
+                  with open('KEEP_ALIVE', 'w') as f:
+                      f.write('1')
               else:
                   print(f"Chain: notified {sent_count}, commit to save flags")
           else:
@@ -115,11 +117,22 @@ jobs:
           if [ -f CHANGED ]; then
             git config user.name "suishouji-bot"
             git config user.email "bot@suishouji.local"
-            # Use PAT for push — PAT-backed pushes trigger new workflow runs
-            # (GITHUB_TOKEN pushes are silently ignored by GitHub)
-            git remote set-url origin "https://${{ secrets.PUSH_TOKEN }}@github.com/${{ github.repository }}"
             git add data.json
             git commit -m "bot: check $(TZ='Asia/Shanghai' date +'%m/%d %H:%M')" || true
             git push
             rm CHANGED
+          fi
+
+      - name: 链式触发下一次检查
+        if: success()
+        run: |
+          if [ -f KEEP_ALIVE ]; then
+            echo "Dispatching next check..."
+            curl -s -X POST \
+              -H "Authorization: token ${{ secrets.PUSH_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/check.yml/dispatches" \
+              -d '{"ref":"main"}'
+            echo ""
+            echo "Dispatched."
           fi
