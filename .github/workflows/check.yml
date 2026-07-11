@@ -117,7 +117,7 @@ jobs:
             git config user.email "bot@suishouji.local"
             # Use PAT for push — PAT-backed pushes trigger new workflow runs
             # (GITHUB_TOKEN pushes are silently ignored by GitHub)
-            git remote set-url origin "https://x-access-token:${{ secrets.PUSH_TOKEN }}@github.com/${{ github.repository }}"
+            git remote set-url origin "https://${{ secrets.PUSH_TOKEN }}@github.com/${{ github.repository }}"
             git add data.json
             git commit -m "bot: check $(TZ='Asia/Shanghai' date +'%m/%d %H:%M')" || true
             git push
