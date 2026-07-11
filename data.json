@@ -5,10 +5,11 @@
       "title": "实验二",
       "dueDate": "2026-07-11T10:00",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "明天早上 10 点帮我设定一个闹铃，叫做实验二。",
       "createdAt": "2026-07-10T12:20:39.683Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-11T11:17:47.044Z"
     },
     {
       "id": "t_1783696589346_fmd2e0",
@@ -22,6 +23,5 @@
       "completedAt": "2026-07-10T23:28:54.594Z"
     }
   ],
-  "updatedAt": "2026-07-11T19:14:59.432803+08:00",
-  "lastCheck": "2026-07-11T19:11:16.691665+08:00"
+  "updatedAt": "2026-07-11T11:17:47.049Z"
 }
