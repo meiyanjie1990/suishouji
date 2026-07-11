@@ -27,12 +27,12 @@
       "title": "提醒我",
       "dueDate": "2026-07-11T20:17",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "1 个小时后提醒我一下。",
       "createdAt": "2026-07-11T11:18:02.537Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-11T12:17:22.276Z"
     }
   ],
-  "updatedAt": "2026-07-11T20:17:00.357869+08:00",
-  "lastCheck": "2026-07-11T20:17:00.357869+08:00"
+  "updatedAt": "2026-07-11T12:17:22.279Z"
 }
