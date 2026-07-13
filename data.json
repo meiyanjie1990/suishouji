@@ -5,10 +5,11 @@
       "title": "跟何喆确认晚上是否上课",
       "dueDate": "2026-07-12T18:00",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "明天下午 6 点的时候跟何喆确认一下要不要晚上上课。",
       "createdAt": "2026-07-11T12:18:03.710Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-13T08:13:47.096Z"
     },
     {
       "id": "t_1783774166050_kj7lx7",
@@ -21,5 +22,5 @@
       "completedAt": "2026-07-13T08:13:44.395Z"
     }
   ],
-  "updatedAt": "2026-07-13T08:13:44.400Z"
+  "updatedAt": "2026-07-13T08:13:47.096Z"
 }
