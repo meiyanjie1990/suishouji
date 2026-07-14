@@ -8,8 +8,16 @@
       "status": "pending",
       "rawInput": "半小时后叫我",
       "createdAt": "2026-07-14T09:56:58.588Z"
+    },
+    {
+      "id": "t_1784023967520_nbon23",
+      "title": "约小绿团",
+      "dueDate": "2026-07-17T09:00",
+      "hasTime": false,
+      "status": "pending",
+      "rawInput": "16 号的时候约一下 17 号的小绿团。",
+      "createdAt": "2026-07-14T10:12:47.520Z"
     }
   ],
-  "updatedAt": "2026-07-14T18:12:20.421045+08:00",
-  "lastCheck": "2026-07-14T18:12:20.421045+08:00"
+  "updatedAt": "2026-07-14T10:12:47.527Z"
 }
