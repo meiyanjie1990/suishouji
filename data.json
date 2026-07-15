@@ -45,8 +45,10 @@
       "hasTime": true,
       "status": "pending",
       "rawInput": "1 小时之后叫下我。",
-      "createdAt": "2026-07-15T02:28:24.064Z"
+      "createdAt": "2026-07-15T02:28:24.064Z",
+      "wxNotified": true
     }
   ],
-  "updatedAt": "2026-07-15T13:03:16.288Z"
+  "updatedAt": "2026-07-15T21:03:27.177716+08:00",
+  "lastCheck": "2026-07-15T21:03:27.177716+08:00"
 }
