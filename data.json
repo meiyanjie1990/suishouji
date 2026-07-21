@@ -80,12 +80,12 @@
       "title": "2 个小时后提醒我还充电宝。",
       "dueDate": "2026-07-21T15:40",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "2 个小时后提醒我还充电宝。",
       "createdAt": "2026-07-21T06:41:07.513Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-21T07:41:31.931Z"
     }
   ],
-  "updatedAt": "2026-07-21T15:41:08.259452+08:00",
-  "lastCheck": "2026-07-21T15:41:08.259452+08:00"
+  "updatedAt": "2026-07-21T07:41:31.935Z"
 }
