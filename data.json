@@ -91,12 +91,12 @@
       "title": "提醒我回家。",
       "dueDate": "2026-07-21T16:46",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "提醒我回家。",
       "createdAt": "2026-07-21T07:42:10.076Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-21T08:52:45.088Z"
     }
   ],
-  "updatedAt": "2026-07-21T16:46:20.990486+08:00",
-  "lastCheck": "2026-07-21T16:46:20.990486+08:00"
+  "updatedAt": "2026-07-21T08:52:45.095Z"
 }
