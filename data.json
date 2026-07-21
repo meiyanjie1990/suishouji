@@ -1,77 +1,67 @@
 {
-    "tasks":  [
-                  {
-                      "id":  "t_1784023018584_1iqlv0",
-                      "title":  "叫我",
-                      "dueDate":  "2026-07-14T18:26",
-                      "hasTime":  true,
-                      "status":  "done",
-                      "rawInput":  "半小时后叫我",
-                      "createdAt":  "2026-07-14T09:56:58.588Z",
-                      "wxNotified":  true,
-                      "completedAt":  "2026-07-15T13:03:16.285Z"
-                  },
-                  {
-                      "id":  "t_1784023967520_nbon23",
-                      "title":  "约小绿团",
-                      "dueDate":  "2026-07-17T09:00",
-                      "hasTime":  false,
-                      "status":  "pending",
-                      "rawInput":  "16 号的时候约一下 17 号的小绿团。",
-                      "createdAt":  "2026-07-14T10:12:47.520Z",
-                      "wxNotified":  true
-                  },
-                  {
-                      "id":  "t_1784070914886_x1zze0",
-                      "title":  "联系小绿团司机",
-                      "dueDate":  "2026-07-16T15:00",
-                      "hasTime":  true,
-                      "status":  "pending",
-                      "rawInput":  "明天下午3 点的时候可以跟后天的小绿团司机联系一下。",
-                      "createdAt":  "2026-07-14T23:15:14.888Z",
-                      "wxNotified":  true
-                  },
-                  {
-                      "id":  "t_1784081186820_m3cinn",
-                      "title":  "去教会给高鹰报销 500+678",
-                      "dueDate":  "2026-07-17T15:00",
-                      "hasTime":  true,
-                      "status":  "pending",
-                      "rawInput":  "周五下午 3 点的时候提醒我，晚上去教会给高鹰报销 500+678。",
-                      "createdAt":  "2026-07-15T02:06:26.820Z",
-                      "wxNotified":  true
-                  },
-                  {
-                      "id":  "t_1784082504062_2u01ok",
-                      "title":  "叫我",
-                      "dueDate":  "2026-07-15T11:28",
-                      "hasTime":  true,
-                      "status":  "pending",
-                      "rawInput":  "1 小时之后叫下我。",
-                      "createdAt":  "2026-07-15T02:28:24.064Z",
-                      "wxNotified":  true
-                  },
-                  {
-                      "id":  "t_1784444342511_mtyla6",
-                      "title":  "明天早上 8 点提醒我带水裤。",
-                      "dueDate":  "2026-07-20T09:00",
-                      "hasTime":  true,
-                      "status":  "pending",
-                      "rawInput":  "明天早上 8 点提醒我带水裤。",
-                      "createdAt":  "2026-07-19T06:59:02.511Z",
-                      "wxNotified":  true
-                  },
-                  {
-                      "id":  "codex_persistence_1784614053152",
-                      "title":  "可靠保存验收（自动删除）",
-                      "dueDate":  "2099-12-31T23:59",
-                      "hasTime":  true,
-                      "status":  "pending",
-                      "rawInput":  "系统验收",
-                      "createdAt":  "2026-07-21T06:07:33.1569746+00:00",
-                      "wxNotified":  false
-                  }
-              ],
-    "updatedAt":  "2026-07-20T16:28:27.743755+08:00",
-    "lastCheck":  "2026-07-20T16:28:27.743755+08:00"
+  "tasks": [
+    {
+      "id": "t_1784023018584_1iqlv0",
+      "title": "叫我",
+      "dueDate": "2026-07-14T18:26",
+      "hasTime": true,
+      "status": "done",
+      "rawInput": "半小时后叫我",
+      "createdAt": "2026-07-14T09:56:58.588Z",
+      "wxNotified": true,
+      "completedAt": "2026-07-15T13:03:16.285Z"
+    },
+    {
+      "id": "t_1784023967520_nbon23",
+      "title": "约小绿团",
+      "dueDate": "2026-07-17T09:00",
+      "hasTime": false,
+      "status": "pending",
+      "rawInput": "16 号的时候约一下 17 号的小绿团。",
+      "createdAt": "2026-07-14T10:12:47.520Z",
+      "wxNotified": true
+    },
+    {
+      "id": "t_1784070914886_x1zze0",
+      "title": "联系小绿团司机",
+      "dueDate": "2026-07-16T15:00",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "明天下午3 点的时候可以跟后天的小绿团司机联系一下。",
+      "createdAt": "2026-07-14T23:15:14.888Z",
+      "wxNotified": true
+    },
+    {
+      "id": "t_1784081186820_m3cinn",
+      "title": "去教会给高鹰报销 500+678",
+      "dueDate": "2026-07-17T15:00",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "周五下午 3 点的时候提醒我，晚上去教会给高鹰报销 500+678。",
+      "createdAt": "2026-07-15T02:06:26.820Z",
+      "wxNotified": true
+    },
+    {
+      "id": "t_1784082504062_2u01ok",
+      "title": "叫我",
+      "dueDate": "2026-07-15T11:28",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "1 小时之后叫下我。",
+      "createdAt": "2026-07-15T02:28:24.064Z",
+      "wxNotified": true
+    },
+    {
+      "id": "t_1784444342511_mtyla6",
+      "title": "明天早上 8 点提醒我带水裤。",
+      "dueDate": "2026-07-20T09:00",
+      "hasTime": true,
+      "status": "pending",
+      "rawInput": "明天早上 8 点提醒我带水裤。",
+      "createdAt": "2026-07-19T06:59:02.511Z",
+      "wxNotified": true
+    }
+  ],
+  "updatedAt": "2026-07-20T16:28:27.743755+08:00",
+  "lastCheck": "2026-07-20T16:28:27.743755+08:00"
 }
