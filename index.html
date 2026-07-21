@@ -288,14 +288,14 @@ nav.tabs button .badge:empty{display:none}
       <div class="manual-date" id="manualDate" style="display:none;margin-top:12px">
         <input type="text" id="manualTitle" placeholder="事项名称">
         <input type="datetime-local" id="manualDateTime">
-        <button class="btn btn-primary btn-small" onclick="addManual()">确认添加</button>
+        <button class="btn btn-primary btn-small" id="btnManualSave" onclick="addManualTask()">确认添加</button>
       </div>
     </div>
     <div class="parse-result" id="parseResult">
       <div class="pr-title" id="prTitle"></div>
       <div class="pr-time" id="prTime"></div>
       <div class="pr-actions">
-        <button class="btn btn-primary btn-small" onclick="confirmTask()">✅ 确认添加</button>
+        <button class="btn btn-primary btn-small" id="btnConfirmSave" onclick="confirmTask()">✅ 确认添加</button>
         <button class="btn btn-outline btn-small" onclick="cancelParse()">取消</button>
       </div>
     </div>
@@ -335,6 +335,7 @@ nav.tabs button .badge:empty{display:none}
 
 <div id="toast"></div>
 
+<script src="./reliable-save.js"></script>
 <script>
 // ============ CONFIG ============
 var DS_KEY='sk-b536a934fbea40c58afd'+'92739665db75';
@@ -347,6 +348,7 @@ var _sha=null;
 var tasks=[];
 var pendingTask=null; // AI parsed, waiting for confirm
 var parsedResult=null;
+var pendingCreateTask=null;
 
 function loadTasks(){
   try{
@@ -394,6 +396,25 @@ async function pushRemote(taskList){
     }
     _sha=(await resp.json()).content.sha;return true;
   }catch(e){return false}
+}
+
+function wait(ms){return new Promise(function(resolve){setTimeout(resolve,ms)})}
+
+var saveTaskReliably=ReliableSave.createSingleFlightSaver(async function(task){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
+  return ReliableSave.saveAndVerifyTask(
+    task,
+    function(){return pushRemote(tasks)},
+    fetchRemote,
+    function(){return wait(350)},
+    3
+  );
+});
+
+function setSaveButton(button,saving,failed){
+  if(!button)return;
+  button.disabled=saving;
+  button.textContent=saving?'⏳ 正在保存并启用提醒…':(failed?'重新保存':'✅ 确认添加');
 }
 
 async function syncFromRemote(){
@@ -802,9 +823,10 @@ async function callAIParse(text){
   }catch(e){return null}
 }
 
-function confirmTask(){
+async function confirmTask(){
   if(!parsedResult)return;
-  var task={
+  var button=document.getElementById('btnConfirmSave');
+  var task=pendingCreateTask||{
     id:genId(),
     title:parsedResult.title,
     dueDate:parsedResult.dueDate,
@@ -813,12 +835,21 @@ function confirmTask(){
     rawInput:document.getElementById('inputText').value.trim(),
     createdAt:new Date().toISOString()
   };
-  tasks.push(task);
-  saveTasks();
+  pendingCreateTask=task;
+  if(!tasks.some(function(item){return item.id===task.id}))tasks.push(task);
+  setSaveButton(button,true,false);
+  var saved=await saveTaskReliably(task);
+  setSaveButton(button,false,!saved);
+  if(!saved){
+    toast('未保存到云端，请点重试');
+    renderAll_light();
+    return;
+  }
+  pendingCreateTask=null;
   parsedResult=null;
   document.getElementById('parseResult').classList.remove('show');
   document.getElementById('inputText').value='';
-  toast('✅ 已添加！');
+  toast('已保存并启用微信提醒');
   renderAll_light();
   // Request notification permission after first task
   if('Notification' in window && Notification.permission==='default'){
@@ -836,12 +867,13 @@ function toggleManual(){
   el.style.display=el.style.display==='none'?'flex':'none';
 }
 
-function addManual(){
+async function addManualTask(){
   var title=document.getElementById('manualTitle').value.trim();
   var dt=document.getElementById('manualDateTime').value;
   if(!title){toast('请输入事项名称');return}
   if(!dt){toast('请选择日期时间');return}
-  var task={
+  var button=document.getElementById('btnManualSave');
+  var task=pendingCreateTask||{
     id:genId(),
     title:title,
     dueDate:dt,
@@ -850,13 +882,22 @@ function addManual(){
     rawInput:title,
     createdAt:new Date().toISOString()
   };
-  tasks.push(task);
-  saveTasks();
+  pendingCreateTask=task;
+  if(!tasks.some(function(item){return item.id===task.id}))tasks.push(task);
+  setSaveButton(button,true,false);
+  var saved=await saveTaskReliably(task);
+  setSaveButton(button,false,!saved);
+  if(!saved){
+    toast('未保存到云端，请点重试');
+    renderAll_light();
+    return;
+  }
+  pendingCreateTask=null;
   document.getElementById('manualTitle').value='';
   document.getElementById('manualDateTime').value='';
   document.getElementById('manualDate').style.display='none';
   document.getElementById('inputText').value='';
-  toast('✅ 已添加！');
+  toast('已保存并启用微信提醒');
   renderAll_light();
   if('Notification' in window && Notification.permission==='default'){
     Notification.requestPermission();
