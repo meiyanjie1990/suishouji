@@ -43,6 +43,8 @@ header{
 .top-row h1 .sub{display:block;font-family:-apple-system,'PingFang SC',sans-serif;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:2px;margin-top:6px;text-transform:uppercase}
 .top-row .date-col{text-align:right;font-size:12px;color:var(--sepia);font-style:italic;line-height:1.7}
 .top-row .date-col strong{display:block;font-size:15px;color:var(--ink);font-style:normal;font-family:Georgia,'Songti SC','Noto Serif SC',serif;font-weight:600}
+.version-status{font-size:10px;color:var(--muted);font-style:normal;margin-top:2px;white-space:nowrap}
+.version-status.update{color:var(--rose);font-weight:700}
 
 /* ---------- Tabs ---------- */
 .pages{max-width:480px;margin:0 auto;padding:12px 16px}
@@ -259,7 +261,7 @@ nav.tabs button .badge:empty{display:none}
 <header>
   <div class="top-row">
     <h1><span class="emoji">⏰</span>随手记<span class="sub">TASK REMINDER</span></h1>
-    <div class="date-col">今天<br><strong id="todayDate"></strong></div>
+    <div class="date-col">今天<br><strong id="todayDate"></strong><div class="version-status" id="versionStatus">版本 v5 · 正在检查更新…</div></div>
   </div>
 </header>
 
@@ -336,8 +338,10 @@ nav.tabs button .badge:empty{display:none}
 <div id="toast"></div>
 
 <script src="./reliable-save.js"></script>
+<script src="./task-parser.js"></script>
 <script>
 // ============ CONFIG ============
+var APP_VERSION=5;
 var DS_KEY='sk-b536a934fbea40c58afd'+'92739665db75';
 var STORAGE_KEY='suishouji_tasks';
 var TK='ghp_FcDaU2QoRwXlfLBs7gUX'+'gcfMv9qjpE43aYys';
@@ -767,15 +771,15 @@ async function doParse(){
   if(!input){toast('先输入你想记的事~');return}
   var btn=document.getElementById('btnParse');
   btn.disabled=true;btn.textContent='⏳ 解析中...';
-  var result=await callAIParse(input);
+  var result=TaskParser.parseRelativeTask(input,new Date());
+  if(!result)result=await callAIParse(input);
   btn.disabled=false;btn.textContent='🔍 AI 解析';
   if(!result){
-    toast('解析失败，试试手动输入日期~');
+    toast('AI 解析暂时不可用，请手动选择时间');
     document.getElementById('manualDate').style.display='flex';
     document.getElementById('manualTitle').value=input;
-    // Set default datetime to tomorrow 9am
-    var def=new Date();def.setDate(def.getDate()+1);def.setHours(9,0,0,0);
-    var localStr=def.getFullYear()+'-'+String(def.getMonth()+1).padStart(2,'0')+'-'+String(def.getDate()).padStart(2,'0')+'T09:00';
+    var def=new Date(Date.now()+60*60*1000);
+    var localStr=def.getFullYear()+'-'+String(def.getMonth()+1).padStart(2,'0')+'-'+String(def.getDate()).padStart(2,'0')+'T'+String(def.getHours()).padStart(2,'0')+':'+String(def.getMinutes()).padStart(2,'0');
     document.getElementById('manualDateTime').value=localStr;
     return;
   }
@@ -922,8 +926,29 @@ function initDate(){
     now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 周'+weekDays[now.getDay()];
 }
 
+async function checkVersion(){
+  var status=document.getElementById('versionStatus');
+  try{
+    var resp=await fetch('./version.json?t='+Date.now(),{cache:'no-store'});
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    var data=await resp.json();
+    var remoteVersion=Number(data.version);
+    if(remoteVersion>APP_VERSION){
+      status.textContent='发现新版本，请重新打开';
+      status.classList.add('update');
+    }else{
+      status.textContent='版本 v5 · 已是最新版';
+      status.classList.remove('update');
+    }
+  }catch(e){
+    status.textContent='版本 v5 · 暂时无法检查更新';
+    status.classList.remove('update');
+  }
+}
+
 async function init(){
   initDate();
+  checkVersion();
   loadTasks();
   // Pull latest from GitHub (includes wxNotified flags from Actions)
   await syncFromRemote();
