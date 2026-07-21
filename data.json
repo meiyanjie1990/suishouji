@@ -26,10 +26,11 @@
       "title": "联系小绿团司机",
       "dueDate": "2026-07-16T15:00",
       "hasTime": true,
-      "status": "pending",
+      "status": "done",
       "rawInput": "明天下午3 点的时候可以跟后天的小绿团司机联系一下。",
       "createdAt": "2026-07-14T23:15:14.888Z",
-      "wxNotified": true
+      "wxNotified": true,
+      "completedAt": "2026-07-21T06:11:37.658Z"
     },
     {
       "id": "t_1784081186820_m3cinn",
@@ -72,5 +73,5 @@
       "createdAt": "2026-07-19T06:59:25.238Z"
     }
   ],
-  "updatedAt": "2026-07-21T06:11:35.364Z"
+  "updatedAt": "2026-07-21T06:11:37.659Z"
 }
